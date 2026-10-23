@@ -37,6 +37,121 @@ body {
   overflow-x: hidden;
 }
 
+.hero-cta-shine {
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.hero-cta-shine::after {
+  position: absolute;
+  top: -50%;
+  left: -65%;
+  width: 35%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 45%),
+    transparent
+  );
+  content: "";
+  pointer-events: none;
+  transform: rotate(22deg);
+  animation: hero-cta-shine 4s ease-in-out infinite;
+}
+
+@keyframes hero-cta-shine {
+  0%,
+  70% {
+    left: -65%;
+  }
+  100% {
+    left: 140%;
+  }
+}
+
+.carousel-slide-in-next {
+  animation: carousel-slide-from-right 350ms ease-out both;
+}
+
+.carousel-slide-in-prev {
+  animation: carousel-slide-from-left 350ms ease-out both;
+}
+
+@keyframes carousel-slide-from-right {
+  from {
+    opacity: 0.65;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes carousel-slide-from-left {
+  from {
+    opacity: 0.65;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-cta-shine::after {
+    animation: none;
+  }
+
+  .carousel-slide-in-next,
+  .carousel-slide-in-prev {
+    animation-duration: 1ms;
+  }
+}
+
+.partners-marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 5%,
+    black 95%,
+    transparent
+  );
+}
+
+.partners-marquee-track {
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+  animation: partners-marquee-scroll 42s linear infinite;
+}
+
+.partners-marquee:hover .partners-marquee-track,
+.partners-marquee:focus-within .partners-marquee-track {
+  animation-play-state: paused;
+}
+
+.partners-marquee-group {
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+}
+
+@keyframes partners-marquee-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partners-marquee-track {
+    animation-duration: 90s;
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;

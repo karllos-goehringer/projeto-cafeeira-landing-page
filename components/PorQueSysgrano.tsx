@@ -16,7 +16,7 @@ export default function PorQueSysgrano() {
               />
               <div className="relative z-10 w-full h-[400px] sm:h-[480px] lg:h-[520px] rounded-[40px] overflow-hidden shadow-xl">
                 <Image
-                  src="/assets/pexels-aleinad-_0222-90235912-13802102.jpg"
+                  src="/assets/image/foto-retexturizada.png"
                   alt="Cafeicultor inspecionando grãos em lavoura de café"
                   fill
                   className="object-cover"

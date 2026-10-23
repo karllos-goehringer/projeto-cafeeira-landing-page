@@ -1,6 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent,
+  type TouchEvent,
+} from "react";
 import Image from "next/image";
 
 interface SlideData {
@@ -80,13 +86,102 @@ const slides: SlideData[] = [
 
 export default function AppShowcase() {
   const [current, setCurrent] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<"next" | "prev">("next");
+  const pointerStart = useRef<{ id: number; x: number; y: number } | null>(null);
+  const touchStart = useRef<{ id: number; x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setSlideDirection("next");
+      setCurrent((index) => (index + 1) % slides.length);
+    }, 10_000);
+
+    return () => window.clearTimeout(timeout);
+  }, [current]);
+
+  const goToSlide = (index: number, direction: "next" | "prev") => {
+    if (index === current) return;
+    setSlideDirection(direction);
+    setCurrent(index);
+  };
 
   const prevSlide = () => {
-    setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+    goToSlide(current === 0 ? slides.length - 1 : current - 1, "prev");
   };
 
   const nextSlide = () => {
-    setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    goToSlide(current === slides.length - 1 ? 0 : current + 1, "next");
+  };
+
+  const changeSlideForSwipe = (deltaX: number, deltaY: number) => {
+    if (Math.abs(deltaX) < 40 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+    if (deltaX < 0) {
+      nextSlide();
+    } else {
+      prevSlide();
+    }
+  };
+
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (!event.isPrimary || event.pointerType === "touch") return;
+    if (event.target instanceof Element && event.target.closest("button")) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    pointerStart.current = {
+      id: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+    };
+  };
+
+  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    const start = pointerStart.current;
+    if (!start || start.id !== event.pointerId) return;
+    pointerStart.current = null;
+
+    const deltaX = event.clientX - start.x;
+    const deltaY = event.clientY - start.y;
+    changeSlideForSwipe(deltaX, deltaY);
+  };
+
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    if (touchStart.current) return;
+    const touch = event.changedTouches.item(0);
+    if (!touch) return;
+    touchStart.current = {
+      id: touch.identifier,
+      x: touch.clientX,
+      y: touch.clientY,
+    };
+  };
+
+  const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    const start = touchStart.current;
+    if (!start) return;
+
+    let touch: { identifier: number; clientX: number; clientY: number } | null =
+      null;
+    for (let index = 0; index < event.changedTouches.length; index += 1) {
+      const changedTouch = event.changedTouches.item(index);
+      if (changedTouch?.identifier === start.id) {
+        touch = changedTouch;
+        break;
+      }
+    }
+    if (!touch) return;
+
+    touchStart.current = null;
+    changeSlideForSwipe(touch.clientX - start.x, touch.clientY - start.y);
+  };
+
+  const handleTouchCancel = () => {
+    touchStart.current = null;
+  };
+
+  const handlePointerCancel = (event: PointerEvent<HTMLDivElement>) => {
+    if (pointerStart.current?.id === event.pointerId) {
+      pointerStart.current = null;
+    }
   };
 
   const activeSlide = slides[current];
@@ -102,10 +197,21 @@ export default function AppShowcase() {
         </div>
 
         {/* Carousel Card */}
-        <div className="bg-[#FBF8F3] rounded-[24px] shadow-xl p-6 sm:p-10 lg:p-14 overflow-hidden border border-[#4B2E1B]/5 transition-all">
-          <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] items-center gap-8 lg:gap-14">
+        <div
+          className="bg-[#FBF8F3] rounded-[24px] shadow-xl p-6 sm:p-10 lg:p-14 overflow-hidden border border-[#4B2E1B]/5 transition-all touch-pan-y"
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerCancel}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchCancel}
+        >
+          <div
+            key={current}
+            className={`grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] items-stretch gap-8 lg:gap-14 carousel-slide-in-${slideDirection}`}
+          >
             {/* Phone Image with offset border */}
-            <div className="flex justify-center">
+            <div className="flex items-center justify-center">
               <div className="relative w-[220px] sm:w-[280px] aspect-[763/1600]">
                 <div
                   aria-hidden="true"
@@ -125,16 +231,18 @@ export default function AppShowcase() {
             </div>
 
             {/* Content & Navigation */}
-            <div className="flex flex-col items-start justify-center">
-              <span className="text-sm font-bold text-[#7D9773] tracking-widest uppercase mb-3">
-                {activeSlide.number}
-              </span>
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#4B2E1B] mb-4 leading-tight">
-                {activeSlide.title}
-              </h3>
-              <p className="text-base sm:text-lg text-[#3E3B37] leading-relaxed mb-8 opacity-90 max-w-xl">
-                {activeSlide.description}
-              </p>
+            <div className="flex flex-col items-start justify-center md:h-full md:justify-between">
+              <div>
+                <span className="text-sm font-bold text-[#7D9773] tracking-widest uppercase mb-3">
+                  {activeSlide.number}
+                </span>
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#4B2E1B] mb-4 leading-tight">
+                  {activeSlide.title}
+                </h3>
+                <p className="text-base sm:text-lg text-[#3E3B37] leading-relaxed mb-8 opacity-90 max-w-xl">
+                  {activeSlide.description}
+                </p>
+              </div>
 
               {/* Controls */}
               <div className="flex items-center gap-4">
@@ -171,7 +279,9 @@ export default function AppShowcase() {
               <button
                 key={slide.id}
                 type="button"
-                onClick={() => setCurrent(index)}
+                onClick={() =>
+                  goToSlide(index, index > current ? "next" : "prev")
+                }
                 aria-label={`Ir para slide ${index + 1}`}
                 className={`h-3 rounded-full transition-all duration-300 cursor-pointer ${
                   isActive
@@ -186,4 +296,3 @@ export default function AppShowcase() {
     </section>
   );
 }
-

@@ -1,20 +1,49 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+
+type NavIconName = "home" | "resources" | "about" | "partners" | "download" | "manual";
+
+const navIcons: Record<NavIconName, ReactNode> = {
+  home: <><path d="m3 10 9-7 9 7" /><path d="M5 9v11h14V9" /><path d="M9 20v-6h6v6" /></>,
+  resources: <><path d="M4 19V5" /><path d="M4 19h16" /><path d="m7 14 4-4 3 3 5-6" /></>,
+  about: <><path d="M12 3 14.8 9.2 21 12l-6.2 2.8L12 21l-2.8-6.2L3 12l6.2-2.8L12 3Z" /></>,
+  partners: <><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="10" cy="7" r="4" /><path d="M20 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></>,
+  download: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /><path d="M12 15V3" /></>,
+  manual: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" /></>,
+};
+
+function NavIcon({ name }: { name: NavIconName }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-4 w-4 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {navIcons[name]}
+    </svg>
+  );
+}
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { name: "Início", href: "#hero" },
-    { name: "Principais Recursos", href: "#recursos" },
-    { name: "Porquê a Sysgrano?", href: "#porque" },
-    { name: "Parcerias", href: "#parcerias" },
-    { name: "Download", href: "#download" },
-    { name: "Manual de Uso", href: "#manual" },
-  ];
+    { name: "Início", href: "#hero", icon: "home" },
+    { name: "Principais Recursos", href: "#recursos", icon: "resources" },
+    { name: "Porquê a Sysgrano?", href: "#porque", icon: "about" },
+    { name: "Parcerias", href: "#parcerias", icon: "partners" },
+    { name: "Download", href: "#download", icon: "download" },
+    { name: "Manual de Uso", href: "#manual", icon: "manual" },
+  ] as const;
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#89a87c] shadow-md transition-all">
@@ -41,8 +70,9 @@ export default function Navbar() {
             <Link
               key={link.name}
               href={link.href}
-              className="px-3 py-2 text-[17px] font-medium text-[#3E3B37] hover:text-[#36471F] hover:underline underline-offset-4 transition-all duration-200"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap px-2 py-2 text-sm font-medium text-[#3E3B37] hover:text-[#36471F] hover:underline underline-offset-4 transition-all duration-200 xl:px-2.5 xl:text-[15px]"
             >
+              <NavIcon name={link.icon} />
               {link.name}
             </Link>
           ))}
@@ -78,8 +108,9 @@ export default function Navbar() {
               key={link.name}
               href={link.href}
               onClick={() => setIsOpen(false)}
-              className="block px-3 py-2.5 rounded-md text-base font-medium text-[#3E3B37] hover:text-[#36471F] hover:bg-black/5"
+              className="flex items-center gap-3 rounded-md px-3 py-2.5 text-base font-medium text-[#3E3B37] hover:bg-black/5 hover:text-[#36471F]"
             >
+              <NavIcon name={link.icon} />
               {link.name}
             </Link>
           ))}

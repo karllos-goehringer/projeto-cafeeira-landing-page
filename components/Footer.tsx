@@ -16,8 +16,9 @@ export default function Footer() {
                 height={48}
                 className="h-12 w-auto object-contain transition-transform group-hover:scale-105"
               />
-              <span className="text-3xl font-normal tracking-tight text-white">
-                Sys<strong className="font-extrabold text-[#7D9773]">grano</strong>
+              <span className="text-3xl font-normal tracking-tight">
+                <span className="text-[#7D9773]">Sys</span>
+                <strong className="font-extrabold text-[#C8A078]">grano</strong>
               </span>
             </Link>
             <p className="text-sm sm:text-base text-[#E1D3C1]/80 leading-relaxed">
@@ -93,11 +94,11 @@ export default function Footer() {
                 >
                   <span>Instagram</span>
                   <Image
-                    src="/assets/logo-instagram.svg"
+                    src="/assets/icon/logo-instagram.svg"
                     alt="Logo do Instagram"
                     width={20}
                     height={20}
-                    className="w-5 h-5"
+                    className="h-5 w-5 brightness-0 invert"
                   />
                 </a>
               </li>
@@ -121,4 +122,3 @@ export default function Footer() {
     </footer>
   );
 }
-
