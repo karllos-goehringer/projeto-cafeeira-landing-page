@@ -41,10 +41,10 @@ export default function Hero() {
               {/* Phone Image */}
               <div className="relative z-10 rounded-[40px] overflow-hidden shadow-2xl bg-white/20">
                 <Image
-                  src="/assets/appHomeCelular.png"
+                  src="/assets/principal.jpeg"
                   alt="Tela inicial do app Sysgrano no celular"
-                  width={460}
-                  height={800}
+                  width={720}
+                  height={1600}
                   className="w-full h-auto object-cover rounded-[40px] transition-transform duration-500 hover:scale-[1.02]"
                   priority
                 />

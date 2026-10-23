@@ -21,7 +21,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm sm:text-base text-[#E1D3C1]/80 leading-relaxed">
-              Tecnologia simples e feita sob medida para levar mais controle e rentabilidade ao cafeicultor.
+              Tecnologia simples feita para levar mais controle e rentabilidade ao cafeicultor.
             </p>
           </div>
 
@@ -62,6 +62,19 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h3 className="text-base font-semibold text-white tracking-wider mb-4">
+              Contato
+            </h3>
+            <a
+              href="mailto:contato@sysgrano.app"
+              className="text-[#E1D3C1]/85 hover:text-white hover:underline transition-colors"
+            >
+              contato@sysgrano.app
+            </a>
           </div>
 
           {/* Social */}

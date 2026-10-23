@@ -106,17 +106,17 @@ export default function AppShowcase() {
           <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] items-center gap-8 lg:gap-14">
             {/* Phone Image with offset border */}
             <div className="flex justify-center">
-              <div className="relative w-[240px] sm:w-[280px] aspect-[3/4]">
+              <div className="relative w-[220px] sm:w-[280px] aspect-[763/1600]">
                 <div
                   aria-hidden="true"
                   className="absolute inset-0 translate-x-3 translate-y-3 rounded-[18px] border-[3px] border-[#C97C7C] -z-0"
                 />
-                <div className="relative z-10 w-full h-full rounded-[18px] overflow-hidden bg-[#E1D3C1] shadow-md">
+                <div className="relative z-12 w-full h-full rounded-[18px] overflow-hidden bg-[#E1D3C1] shadow-md">
                   <Image
                     src={activeSlide.image}
                     alt={`Print da tela: ${activeSlide.title}`}
                     fill
-                    className="object-cover transition-opacity duration-300"
+                    className="object-contain transition-opacity duration-300"
                     sizes="(max-width: 768px) 240px, 280px"
                     priority
                   />
